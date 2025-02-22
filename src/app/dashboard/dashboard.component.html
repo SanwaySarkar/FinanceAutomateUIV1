@@ -1,0 +1,109 @@
+<div class="p-6 text-gray-200 bg-gray-900">
+  <!-- Header Section -->
+  <div class="mb-8 text-center">
+    <h1 class="text-3xl font-bold mb-2 text-gray-300">Smart Financial Planning</h1>
+    <p class="text-gray-400">Harness the power of artificial intelligence to create personalized financial strategies and secure recommendations that optimize your financial goals faster!</p>
+  </div>
+  <div class="grid grid-cols-3 gap-8">
+    <!-- Left Column -->
+    <div class="col-span-1 space-y-6" style="max-width: 80%;">
+      <div class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+        <h2 class="text-xl font-semibold mb-4 text-gray-300">Select Your Path to Financial Success</h2>
+        <div class="space-y-3">
+          <div 
+            class="flex items-center p-3 rounded-lg cursor-pointer transition duration-300 ease-in-out"
+            [ngClass]="{'bg-gray-700': showRetirementForm, 'hover:bg-gray-700': !showRetirementForm}"
+            (click)="toggleRetirementForm()">
+            <span class="text-gray-300">Retirement Planning</span>
+            <i class="fas fa-piggy-bank ml-2"></i>
+          </div>
+          <div 
+            class="flex items-center p-3 rounded-lg cursor-pointer transition duration-300 ease-in-out"
+            [ngClass]="{'bg-gray-700': showSpecificGoalForm, 'hover:bg-gray-700': !showSpecificGoalForm}"
+            (click)="selectSpecificGoal()">
+            <span class="text-gray-300">Specific Goal</span>
+            <i class="fas fa-bullseye ml-2"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Right Column -->
+    <div class="col-span-1 space-y-6" style="max-width: 150%;">
+      <div *ngIf="showRetirementForm || showSpecificGoalForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+        <!-- Form Content -->
+        <div class="space-y-4">
+          <div class="grid grid-cols-2 gap-4">
+            <div *ngIf="showRetirementForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Target Retirement Age">
+            </div>
+            <div *ngIf="showRetirementForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Current Age">
+            </div>
+            <div *ngIf="showRetirementForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Income">
+            </div>
+            <div *ngIf="showSpecificGoalForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Amount Needed">
+            </div>
+            <div *ngIf="showSpecificGoalForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Time Frame">
+            </div>
+            <div *ngIf="showSpecificGoalForm">
+              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Savings">
+            </div>
+            <!-- Risk Tolerance Dropdown -->
+            <div>
+              <select class="form-input bg-gray-700 text-gray-200">
+                <option value="" disabled selected>Risk Tolerance</option>
+                <option value="high">High</option>
+                <option value="moderate">Moderate</option>
+                <option value="low">Low</option>
+              </select>
+            </div>
+          </div>
+          <div class="flex space-x-3">
+            <button class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">Generate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Portfolio Section -->
+  <div class="mt-8" *ngIf="investmentportfolioFlag">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Portfolio</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div class="text-2xl font-bold text-gray-300 mb-2">{{ investment.allocationPercentage }}</div>
+        <p class="text-sm text-gray-400">{{ investment.assetType }}</p>
+      </div>
+    </div>
+  </div>
+  <!-- Plan Overview -->
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Plan Overview</h2>
+    <div class="grid grid-cols-2 gap-8">
+      <div>
+        <div class="text-2xl font-bold text-gray-300">$15.8K Goals</div>
+        <p class="text-sm text-gray-400 mt-2">Monthly investment needed</p>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-300">15 years</div>
+        <p class="text-sm text-gray-400 mt-2">Time to reach goal</p>
+      </div>
+    </div>
+  </div>
+  <!-- Portfolio Allocation -->
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Portfolio Allocation</h2>
+    <div class="space-y-4">
+      <div class="flex justify-between items-center">
+        <div class="text-gray-400">Conservative Strategy (> 5 yrs)</div>
+        <div class="text-gray-300 font-semibold">70%</div>
+      </div>
+      <div class="flex justify-between items-center">
+        <div class="text-gray-400">Aggressive Strategy (> 10 yrs)</div>
+        <div class="text-gray-300 font-semibold">30%</div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  @apply bg-darker-blue text-white min-h-screen;
+}
+
+.menu-item {
+  @apply flex items-center p-4 text-gray-300 hover:bg-light-blue rounded-lg cursor-pointer transition-colors duration-200;
+}
+
+.form-input {
+  @apply bg-light-blue border border-gray-600 rounded-lg p-2 w-full text-white focus:outline-none focus:border-accent-blue;
+}
+
+.btn-primary {
+  @apply bg-accent-blue text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200;
+}
+
+.portfolio-card {
+  @apply bg-light-blue rounded-lg p-4 shadow-lg;
+}
+
+.section-title {
+  @apply text-xl font-semibold mb-4;
+}
