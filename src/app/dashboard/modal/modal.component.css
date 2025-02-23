@@ -1,0 +1,84 @@
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: #2d3748;
+  padding: 20px;
+  border-radius: 8px;
+  width: 100%; /* Increase width to full viewport */
+  max-width: 1200px; /* Increase max-width to accommodate more columns */
+  height: 90vh; /* Keep the increased height */
+  overflow: hidden; /* Hide overflow for the modal itself */
+  display: flex;
+  flex-direction: column; /* Ensure content stacks vertically */
+}
+table th, table td {
+  padding: 12px 16px; /* Consistent padding for headers and cells */
+  text-align: left; /* Align text to the left for consistency */
+}
+
+table th {
+  background-color: #3b4252; /* Different background for headers */
+  font-weight: bold; /* Bold text for headers */
+}
+
+table td {
+  background-color: #2d3748; /* Background for data cells */
+}
+.modal-body {
+  overflow-x: auto; /* Enable horizontal scrolling */
+  overflow-y: auto; /* Enable vertical scrolling */
+  flex-grow: 1; /* Allow the body to grow and take available space */
+  margin-bottom: 20px; /* Add margin to ensure space for the button */
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 12px; /* Width of the scrollbar */
+  height: 12px; /* Height of the scrollbar */
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #333; /* Darker background for the track */
+  border-radius: 10px; /* Rounded corners for the track */
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #ff7e5f, #feb47b); /* New gradient color for the thumb */
+  border-radius: 10px; /* Rounded corners for the thumb */
+  border: 3px solid #2d3748; /* Border to create a gap effect */
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #9fdf51df, #ff7e5f); /* Reverse gradient on hover */
+}
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #357ab8, #4a90e2); /* Reverse gradient on hover */
+}
+
+
+
+button.btn-primary {
+  align-self: center; /* Center align the button */
+  padding: 5px 10px; /* Make the button smaller */
+  font-size: 14px; /* Adjust font size for a smaller button */
+  background-color: #4a90e2; /* Ensure button color matches design */
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button.btn-primary:hover {
+  background-color: #357ab8; /* Darken on hover */
+}

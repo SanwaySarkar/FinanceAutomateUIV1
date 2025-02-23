@@ -1,0 +1,42 @@
+<div class="modal-overlay">
+  <div class="modal-content">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Mutual Fund Details</h2>
+    <div class="modal-body">
+      <table class="min-w-full bg-gray-800 text-gray-300">
+        <thead>
+          <tr>
+            <th class="py-2 px-4 text-left border-b border-gray-700">Scheme Name</th>
+            <th class="py-2 px-4 text-left border-b border-gray-700">Asset Type</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">Crisil Rating</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">AUM(CR)</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">1M</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">3M</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">6M</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">1Y</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">2Y</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">3Y</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">5Y</th>
+            <th class="py-2 px-4 text-right border-b border-gray-700">10Y</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let fund of mutFundData">
+            <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.schemeName }}</td>
+            <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.categoryName }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.crisilRating }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.aum }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['1M'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['3M'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['6M'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['1Y'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['2Y'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['3Y'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['5Y'] }}</td>
+            <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund['10Y'] }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <button class="mt-4 btn-primary" (click)="close()">Close</button>
+  </div>
+</div>

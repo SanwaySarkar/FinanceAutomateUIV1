@@ -29,81 +29,148 @@
     </div>
     <!-- Right Column -->
     <div class="col-span-1 space-y-6" style="max-width: 150%;">
-      <div *ngIf="showRetirementForm || showSpecificGoalForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
-        <!-- Form Content -->
-        <div class="space-y-4">
-          <div class="grid grid-cols-2 gap-4">
-            <div *ngIf="showRetirementForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Target Retirement Age">
+      <!-- Retirement Form -->
+      <div *ngIf="showRetirementForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+        <form (ngSubmit)="submitRetirementForm()">
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Target Retirement Age" required pattern="[0-9]*" [(ngModel)]="retirementAge" name="retirementAge">
+              </div>
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Current Age" required pattern="[0-9]*" [(ngModel)]="currentAge" name="currentAge">
+              </div>
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Expected Income" required pattern="[0-9]*" [(ngModel)]="monthlyExpectedSavings" name="monthlyExpectedSavings">
+              </div>
+              <!-- Risk Tolerance Dropdown -->
+              <div>
+                <select class="form-input bg-gray-700 text-gray-200" [(ngModel)]="riskTolerance" name="riskTolerance" required>
+                  <option value="" disabled selected>Risk Tolerance</option>
+                  <option value="High Return">High</option>
+                  <option value="High Sharpe Ratio">Moderate</option>
+                  <option value="Low Volatility">Low</option>
+                </select>
+              </div>
             </div>
-            <div *ngIf="showRetirementForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Current Age">
-            </div>
-            <div *ngIf="showRetirementForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Income">
-            </div>
-            <div *ngIf="showSpecificGoalForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Amount Needed">
-            </div>
-            <div *ngIf="showSpecificGoalForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Time Frame">
-            </div>
-            <div *ngIf="showSpecificGoalForm">
-              <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Savings">
-            </div>
-            <!-- Risk Tolerance Dropdown -->
-            <div>
-              <select class="form-input bg-gray-700 text-gray-200">
-                <option value="" disabled selected>Risk Tolerance</option>
-                <option value="high">High</option>
-                <option value="moderate">Moderate</option>
-                <option value="low">Low</option>
-              </select>
+            <div class="flex space-x-3">
+              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">Submit Retirement Form</button>
             </div>
           </div>
-          <div class="flex space-x-3">
-            <button class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">Generate</button>
+        </form>
+      </div>
+      
+      <!-- Specific Goal Form -->
+      <div *ngIf="showSpecificGoalForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
+        <form (ngSubmit)="submitSpecificGoalForm()">
+          <div class="space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Amount Needed" required pattern="[0-9]*" [(ngModel)]="amountNeeded" name="amountNeeded">
+              </div>
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Time Frame" required pattern="[0-9]*" [(ngModel)]="timeFrame" name="timeFrame">
+              </div>
+              <div>
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Savings" required pattern="[0-9]*" [(ngModel)]="monthlySavingsReq" name="monthlySavingsReq">
+              </div>
+              <div>
+                <select class="form-input bg-gray-700 text-gray-200" [(ngModel)]="riskTolerance" name="riskTolerance" required>
+                  <option value="" disabled selected>Risk Tolerance</option>
+                  <option value="High Return">High</option>
+                  <option value="High Sharpe Ratio">Moderate</option>
+                  <option value="Low Volatility">Low</option>
+                </select>
+              </div>
+            </div>
+            <div class="flex space-x-3">
+              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">
+    Generate
+  </button>
+  <div *ngIf="isLoading" class="flex justify-center items-center">
+    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
+</div>
           </div>
-        </div>
+        </form>
       </div>
     </div>
   </div>
-  <!-- Portfolio Section -->
-  <div class="mt-8" *ngIf="investmentportfolioFlag">
-    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Portfolio</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
-        <div class="text-2xl font-bold text-gray-300 mb-2">{{ investment.allocationPercentage }}</div>
-        <p class="text-sm text-gray-400">{{ investment.assetType }}</p>
-      </div>
-    </div>
-  </div>
+
   <!-- Plan Overview -->
   <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
     <h2 class="text-xl font-semibold mb-4 text-gray-300">Plan Overview</h2>
-    <div class="grid grid-cols-2 gap-8">
+    <div class="grid grid-cols-4 gap-8"> <!-- Adjusted gap for even spacing -->
       <div>
-        <div class="text-2xl font-bold text-gray-300">$15.8K Goals</div>
-        <p class="text-sm text-gray-400 mt-2">Monthly investment needed</p>
+        <div class="text-2xl font-bold text-gray-300">{{ corpusAmount | currency:'INR':'symbol' }}</div>
+        <p class="text-sm text-gray-400 mt-2">Total Corpus Required At Retirement</p>
       </div>
       <div>
-        <div class="text-2xl font-bold text-gray-300">15 years</div>
+        <div class="text-2xl font-bold text-gray-300">{{ future_monthly_income | currency:'INR':'symbol' }}</div>
+        <p class="text-sm text-gray-400 mt-2">Future Monthly Income Needed After Retirement</p>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{timeInyears}} years</div>
         <p class="text-sm text-gray-400 mt-2">Time to reach goal</p>
       </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{monthlySavings | currency:'INR':'symbol'}}</div>
+        <p class="text-sm text-gray-400 mt-2">Monthly investment needed</p>
+      </div>
     </div>
   </div>
-  <!-- Portfolio Allocation -->
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <!-- Plan Overview Text -->
+    <div class="mt-4">
+      <p class="text-l text-gray-400">{{ planOverview }}</p>
+    </div>
+  </div>
+    <!-- Portfolio Section -->
+    <!-- Recommended Investment Allocation -->
+    <div class="mt-8" *ngIf="investmentportfolioFlag">
+      <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Allocation</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" style="max-width: 70%;">
+        <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
+          <div class="text-2xl font-bold text-gray-300 mb-2 text-center">{{ investment.allocationPercentage }}</div>
+          <p class="text-sm text-gray-400 flex text-center">
+            {{ investment.assetType }}
+            <span class="tooltip ml-2">
+              <i class="fas fa-question-circle text-gray-500 cursor-pointer" (click)="filterMutFundData(investment.assetType)"></i>
+              <span class="tooltiptext">See all funds of this asset type</span>
+            </span>
+          </p>
+        </div>
+      </div>
+    </div>
+  <!-- Recommended Portfolio Allocation -->
   <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
     <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Portfolio Allocation</h2>
-    <div class="space-y-4">
-      <div class="flex justify-between items-center">
-        <div class="text-gray-400">Conservative Strategy (> 5 yrs)</div>
-        <div class="text-gray-300 font-semibold">70%</div>
-      </div>
-      <div class="flex justify-between items-center">
-        <div class="text-gray-400">Aggressive Strategy (> 10 yrs)</div>
-        <div class="text-gray-300 font-semibold">30%</div>
-      </div>
-    </div>
+    <table class="min-w-full bg-gray-800 text-gray-300">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Fund Type</th>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Fund Name</th>
+          <th class="py-2 px-4 text-right border-b border-gray-700">Allocation (%)</th>
+          <th class="py-2 px-4 text-right border-b border-gray-700">Allocation Amount</th>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fund of recommendedPortfolio">
+          <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.assetType }}</td>
+          <td class="py-2 px-4 text-left border-b border-gray-700">
+            {{ fund.fundName }}
+            <div class="text-sm text-gray-400 mt-1" title="1W: {{ fund['1W'] }}, 1M: {{ fund['1M'] }}, 3M: {{ fund['3M'] }}, 6M: {{ fund['6M'] }}, 1Y: {{ fund['1Y'] }}, 2Y: {{ fund['2Y'] }}, 3Y: {{ fund['3Y'] }}, 5Y: {{ fund['5Y'] }}, 10Y: {{ fund['10Y'] }}, Avg: {{ fund.averageReturn }}">
+              <i class="fas fa-info-circle"></i> Past Returns
+            </div>
+          </td>
+          <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.allocationPercentage }}%</td>
+          <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.allocationAmount | currency:'INR':'symbol' }}</td>
+          <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.reason }}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
+  <!-- Modal Component -->
+  <app-modal *ngIf="showModal" [mutFundData]="mutFundData" (closeModal)="showModal = false"></app-modal>
 </div>
