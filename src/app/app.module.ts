@@ -1,23 +1,22 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { HttpClientModule } from '@angular/common/http'; // Import HttpClientModule
-import { ModalComponent } from './modal/modal.component';
+import { FormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
-
+import { routes } from './app.routes'; 
+import { RouterModule } from '@angular/router'; 
+import { LandingPageComponent } from './landing-page/landing-page.component'; // Import the LandingPageComponent
 
 @NgModule({
-  exports: [ModalComponent], // Export the component to use it in other modules
   declarations: [
     AppComponent,
-    ModalComponent,
-    // ... other components ...
+    LandingPageComponent // Declare the LandingPageComponent
   ],
   imports: [
     BrowserModule,
-    HttpClientModule // Add HttpClientModule here
-    // ... other modules ...
+    FormsModule,
+    RouterModule.forRoot(routes) 
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {}

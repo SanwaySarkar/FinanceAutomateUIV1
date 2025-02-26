@@ -1,4 +1,7 @@
-<div class="p-6 text-gray-200 bg-gray-900">
+<div *ngIf="isLoading" class="flex justify-center items-center">
+  <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+</div>
+<div class="p-6 text-gray-200 bg-gray-900" [ngClass]="{'dark-mode': isDarkMode}">
   <!-- Header Section -->
   <div class="mb-8 text-center">
     <h1 class="text-3xl font-bold mb-2 text-gray-300">Smart Financial Planning</h1>
@@ -85,22 +88,23 @@
             </div>
             <div class="flex space-x-3">
               <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">
-    Generate
-  </button>
-  <div *ngIf="isLoading" class="flex justify-center items-center">
-    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-  </div>
-</div>
+                Generate recommendations
+              </button>
+            </div>
           </div>
         </form>
       </div>
     </div>
   </div>
-
+<div *ngIf="flagRetire">
   <!-- Plan Overview -->
   <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
     <h2 class="text-xl font-semibold mb-4 text-gray-300">Plan Overview</h2>
-    <div class="grid grid-cols-4 gap-8"> <!-- Adjusted gap for even spacing -->
+    <div class="grid grid-cols-4 gap-8">
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{monthlySavings | currency:'INR':'symbol'}}</div>
+        <p class="text-sm text-gray-400 mt-2">Monthly investment needed</p>
+      </div>
       <div>
         <div class="text-2xl font-bold text-gray-300">{{ corpusAmount | currency:'INR':'symbol' }}</div>
         <p class="text-sm text-gray-400 mt-2">Total Corpus Required At Retirement</p>
@@ -113,35 +117,102 @@
         <div class="text-2xl font-bold text-gray-300">{{timeInyears}} years</div>
         <p class="text-sm text-gray-400 mt-2">Time to reach goal</p>
       </div>
-      <div>
-        <div class="text-2xl font-bold text-gray-300">{{monthlySavings | currency:'INR':'symbol'}}</div>
-        <p class="text-sm text-gray-400 mt-2">Monthly investment needed</p>
-      </div>
     </div>
   </div>
   <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
-    <!-- Plan Overview Text -->
     <div class="mt-4">
       <p class="text-l text-gray-400">{{ planOverview }}</p>
     </div>
   </div>
-    <!-- Portfolio Section -->
-    <!-- Recommended Investment Allocation -->
-    <div class="mt-8" *ngIf="investmentportfolioFlag">
-      <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Allocation</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" style="max-width: 70%;">
-        <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
-          <div class="text-2xl font-bold text-gray-300 mb-2 text-center">{{ investment.allocationPercentage }}</div>
-          <p class="text-sm text-gray-400 flex text-center">
-            {{ investment.assetType }}
-            <span class="tooltip ml-2">
-              <i class="fas fa-question-circle text-gray-500 cursor-pointer" (click)="filterMutFundData(investment.assetType)"></i>
-              <span class="tooltiptext">See all funds of this asset type</span>
-            </span>
-          </p>
-        </div>
+  <!-- Portfolio Section -->
+  <!-- Recommended Investment Allocation -->
+  <div class="mt-8" *ngIf="investmentportfolioFlag">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Allocation</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" style="max-width: 70%;">
+      <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div class="text-2xl font-bold text-gray-300 mb-2 text-center">{{ investment.allocationPercentage }}</div>
+        <p class="text-sm text-gray-400 flex text-center">
+          {{ investment.assetType }}
+          <span class="tooltip ml-2">
+            <i class="fas fa-question-circle text-gray-500 cursor-pointer" (click)="filterMutFundData(investment.assetType)"></i>
+            <span class="tooltiptext">See all funds of this asset type</span>
+          </span>
+        </p>
       </div>
     </div>
+  </div>
+  <!-- Recommended Portfolio Allocation -->
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Portfolio Allocation</h2>
+    <table class="min-w-full bg-gray-800 text-gray-300">
+      <thead>
+        <tr>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Fund Type</th>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Fund Name</th>
+          <th class="py-2 px-4 text-right border-b border-gray-700">Allocation (%)</th>
+          <th class="py-2 px-4 text-right border-b border-gray-700">Allocation Amount</th>
+          <th class="py-2 px-4 text-left border-b border-gray-700">Remarks</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let fund of filteredPortfolio">
+          <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.assetType }}</td>
+          <td class="py-2 px-4 text-left border-b border-gray-700">
+            {{ fund.fundName }}
+            <div class="text-sm text-gray-400 mt-1" title="1W: {{ fund['1W'] }}, 1M: {{ fund['1M'] }}, 3M: {{ fund['3M'] }}, 6M: {{ fund['6M'] }}, 1Y: {{ fund['1Y'] }}, 2Y: {{ fund['2Y'] }}, 3Y: {{ fund['3Y'] }}, 5Y: {{ fund['5Y'] }}, 10Y: {{ fund['10Y'] }}, Avg: {{ fund.averageReturn }}">
+              <i class="fas fa-info-circle"></i> Past Returns
+            </div>
+          </td>
+          <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.allocationPercentage }}%</td>
+          <td class="py-2 px-4 text-right border-b border-gray-700">{{ fund.allocationAmount | currency:'INR':'symbol' }}</td>
+          <td class="py-2 px-4 text-left border-b border-gray-700">{{ fund.reason }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<div *ngIf="flagSpecific">
+  <!-- Plan Overview -->
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Plan Overview</h2>
+    <div class="grid grid-cols-3 gap-4">
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{monthlyInvest | currency:'INR':'symbol'}}</div>
+        <p class="text-sm text-gray-400 mt-4">Monthly investment</p>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{ targetAmount | currency:'INR':'symbol' }}</div>
+        <p class="text-sm text-gray-400 mt-4">Target Amount</p>
+      </div>
+      <div>
+        <div class="text-2xl font-bold text-gray-300">{{durationInYears}} years</div>
+        <p class="text-sm text-gray-400 mt-2">Time to reach goal</p>
+      </div>
+ 
+    </div>
+  </div>
+  <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
+    <div class="mt-4">
+      <p class="text-l text-gray-400">{{ planOverview }}</p>
+    </div>
+  </div>
+  <!-- Portfolio Section -->
+  <!-- Recommended Investment Allocation -->
+  <div class="mt-8" *ngIf="investmentportfolioFlag">
+    <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Investment Allocation</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-3" style="max-width: 70%;">
+      <div *ngFor="let investment of investmentPortfolio" class="bg-gray-800 p-4 rounded-lg shadow-lg">
+        <div class="text-2xl font-bold text-gray-300 mb-2 text-center">{{ investment.allocationPercentage }}</div>
+        <p class="text-sm text-gray-400 flex text-center">
+          {{ investment.assetType }}
+          <span class="tooltip ml-2">
+            <i class="fas fa-question-circle text-gray-500 cursor-pointer" (click)="filterMutFundData(investment.assetType)"></i>
+            <span class="tooltiptext">See all funds of this asset type</span>
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
   <!-- Recommended Portfolio Allocation -->
   <div class="mt-8 bg-gray-800 rounded-lg p-6 shadow-lg">
     <h2 class="text-xl font-semibold mb-4 text-gray-300">Recommended Portfolio Allocation</h2>
@@ -171,6 +242,8 @@
       </tbody>
     </table>
   </div>
-  <!-- Modal Component -->
-  <app-modal *ngIf="showModal" [mutFundData]="mutFundData" (closeModal)="showModal = false"></app-modal>
 </div>
+
+<!-- Modal Component -->
+<app-modal *ngIf="showModal" [mutFundData]="mutFundData" (closeModal)="showModal = false"></app-modal>
+

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ModalModule } from './modal/modal.module'; // Import the ModalModule
+import { ValidationModalComponent } from './validation-modal/validation-modal.component'; // Import the ValidationModalComponent
 
 @Component({
   selector: 'app-dashboard',
@@ -89,34 +90,46 @@ import { ModalModule } from './modal/modal.module'; // Import the ModalModule
 export class DashboardComponent {
   showRetirementForm = true;
   showSpecificGoalForm = false;
+  isLoading: boolean = false; // Ensure this line is present
+  isDarkMode = false; 
+  flagRetire = false;
+  flagSpecific = false;// Add this property
+  corpusProgress = 0; // Add this property
+  searchTerm = ''; // Add this property
+  filteredPortfolio: any[] = []; // Add this property
   investmentPortfolio: any[] = [];
   recommendedPortfolio: any[] = [];
   planOverview: string = '';
-  investmentportfolioFlag = true
-  corpusAmount:number =0;
-  monthlySavings:number =0;
-  timeInyears: number =0;
-  future_monthly_income: number =0;
-  showModal = false; // Add this line
+  investmentportfolioFlag = true;
+  corpusAmount: number = 0;
+  monthlySavings: number = 0;
+  timeInyears: number = 0;
+  targetAmount: string = '';
+  monthlyInvest: string = '';
+  durationInYears: string = '';
+  future_monthly_income: number = 0;
+  showModal = false;
   mutFundData: any[] = [];
-  retirementAge: string = '' ;
-  currentAge:  string = '';
-  monthlyIncome:  string = '';
-  amountNeeded:  string = '';
-  timeFrame:  string = '';
-  monthlyExpectedSavings: string ='';
-  monthlySavingsReq:string = '';
+  retirementAge: string = '';
+  currentAge: string = '';
+  monthlyExpectedSavings: string = '';
+  amountNeeded: string = '';
+  timeFrame: string = '';
+  monthlySavingsReq: string = '';
   riskTolerance: string = '';
-  mutFundList: string = ''; 
+  mutFundList: string = '';
   jsonAll: any;
-    constructor(private http: HttpClient) {
-    
+
+  constructor(private http: HttpClient) {}
+
+  toggleDarkMode() {
+    this.isDarkMode = !this.isDarkMode;
   }
 
-  fetchInvestmentPortfolio() {
-    this.http.get<any[]>('your-backend-api-url/investment-portfolio').subscribe((data: any[]) => {
-      this.investmentPortfolio = data; // Assign the fetched data to the investmentPortfolio array
-    });
+  filterPortfolio() {
+    this.filteredPortfolio = this.recommendedPortfolio.filter(fund =>
+      fund.fundName.toLowerCase().includes(this.searchTerm.toLowerCase())
+    );
   }
 
   toggleRetirementForm() {
@@ -133,22 +146,23 @@ export class DashboardComponent {
     }
   }
 
-  filterMutFundData(assetType: string) {
-    this.mutFundData = this.jsonAll.filter((fund: { categoryName: string }) => fund.categoryName === assetType);
-    this.showModal = true;
+  validationMessage: string = ''; // Add this property
+  showValidationModal: boolean = false; // Add this property
+
+  openValidationModal(message: string) {
+    this.validationMessage = message;
+    this.showValidationModal = true; // Use separate modal flag
   }
-  isLoading: boolean = false; // Ensure this line is present
+
+ 
+
+
 
   submitRetirementForm() {
+   
+    this.flagSpecific = false;
+    this.flagRetire = false; 
     this.isLoading = true; // Start loading animation
-    // Call the backend endpoint for retirement form
-    console.log('Submitting Retirement Form:', {
-      retirementAge: this.retirementAge,
-      currentAge: this.currentAge,
-      monthlyExpectedSavings: this.monthlyExpectedSavings,
-      riskTolerance: this.riskTolerance,
-    });
-
     const formData = {
       currentAge: this.currentAge.toString(),
       retirementAge: this.retirementAge.toString(),
@@ -167,8 +181,6 @@ export class DashboardComponent {
         const jsonString = JSON.stringify(response.response);
         const jsonData: any = JSON.parse(jsonString);
         this.jsonAll = JSON.parse(response.mutFundList);
-        console.log('Response:', jsonData);
-
         this.corpusAmount = jsonData.corpusAmount;
         this.investmentPortfolio = jsonData.recommendedAllocation;
         this.planOverview = jsonData.planOverview;
@@ -178,6 +190,40 @@ export class DashboardComponent {
         this.future_monthly_income = jsonData.futureMonthlyIncome;
         this.recommendedPortfolio = jsonData.recommendedPortfolio;
         this.mutFundData = JSON.parse(response.mutFundList);
+        this.flagRetire = true
+        this.filterPortfolio(); // Update filtered portfolio
+      }, error => {
+        this.isLoading = false; // Stop loading animation on error
+        console.error('Error submitting form', error);
+      });
+  }
+
+  submitSpecificGoalForm() {
+    this.isLoading = true;
+    this.flagSpecific = false;
+    this.flagRetire = false; // Start loading animation
+    const formData = {
+      targetAmount: this.amountNeeded,
+      timeFrame: this.timeFrame,
+      monthlyInvestment: this.monthlySavingsReq,
+      riskTolerance: this.riskTolerance.toString(),
+    };
+
+    this.http.post('http://localhost:8000/uploadDetailsSpecificGoal', formData)
+      .subscribe((res: any) => {
+        this.isLoading = false; // Stop loading animation
+        // Handle response
+        this.mutFundData = JSON.parse(res.mutFundList);
+        const jsonString = JSON.stringify(res.response);
+        const jsonData: any = JSON.parse(jsonString);
+        this.jsonAll = JSON.parse(res.mutFundList);
+        this.planOverview = jsonData.planOverview;
+        this.recommendedPortfolio = jsonData.recommendedPortfolio;
+        this.investmentPortfolio = jsonData.recommendedAllocation;
+        this.targetAmount = jsonData.targetAmount;
+        this.monthlyInvest = jsonData.monthlyInvest;
+        this.durationInYears = jsonData.durationInYears;
+        this.flagSpecific = true;
 
       }, error => {
         this.isLoading = false; // Stop loading animation on error
@@ -185,14 +231,8 @@ export class DashboardComponent {
       });
   }
 
-  // Method to handle specific goal form submission
-  submitSpecificGoalForm() {
-    // Call the backend endpoint for specific goal form
-    console.log('Submitting Specific Goal Form:', {
-      amountNeeded: this.amountNeeded,
-      timeFrame: this.timeFrame,
-      monthlySavingsReq: this.monthlySavingsReq
-    });
-    // Add your HTTP request logic here
+  filterMutFundData(assetType: string) {
+    this.mutFundData = this.jsonAll.filter((fund: { categoryName: string }) => fund.categoryName === assetType);
+    this.showModal = true;
   }
 }
