@@ -1,21 +1,31 @@
+<div *ngIf="isLogin" class="flex justify-center items-center">
+  <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+</div>
 <div class="login-container">
   <div class="login-box">
     <h2>Log in</h2>
-    <form>
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
       <div class="input-group">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="hello@example.com" required>
+        <label for="username">Username</label>
+        <input id="username" formControlName="username" type="text" />
+        <div *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched" class="error">
+          Username is required.
+        </div>
       </div>
       <div class="input-group">
         <label for="password">Password</label>
-        <input type="password" id="password" required>
+        <input id="password" formControlName="password" type="password" />
+        <div *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" class="error">
+          Password is required.
+        </div>
       </div>
-      <button type="submit" class="login-button">Log in</button>
+      <button type="submit" class="login-button" [disabled]="loginForm.invalid">Log in</button>
       <a href="#" class="forgot-password">I forgot my password</a>
     </form>
+    <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
     <div class="signup-link">
       <p>Don't have an account?</p>
-      <a href="#">Sign up for free!</a>
+      <a routerLink="/signup">Sign up</a>
     </div>
   </div>
 </div>

@@ -1,93 +1,21 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ModalModule } from './modal/modal.module'; // Import the ModalModule
-import { ValidationModalComponent } from './validation-modal/validation-modal.component'; // Import the ValidationModalComponent
-
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
+import { ModalModule } from './modal/modal.module';
+import { AuthService } from '../auth.service';
+import { Router, RouterModule } from '@angular/router'; // Import the ModalModule
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, ModalModule], // Use ModalModule here
+  imports: [CommonModule, FormsModule, HttpClientModule, ModalModule,RouterModule,ReactiveFormsModule], // Use ModalModule here
   templateUrl: './dashboard.component.html',
-  styles: [`
-    :host {
-      display: block;
-    }
-    .bg-light-blue {
-      background-color: #2a3b5a;
-    }
-    .hover\\:bg-dark-blue:hover {
-      background-color: #1f2a3a;
-    }
-    .text-accent-blue {
-      color: #4a90e2;
-    }
-    .btn-primary {
-      background-color: #4a90e2;
-      color: white;
-      padding: 0.5rem 1rem;
-      border-radius: 0.375rem;
-      transition: background-color 0.3s ease;
-    }
-    .btn-primary:hover {
-      background-color: #357ab8;
-    }
-    .form-input {
-      width: 100%;
-      padding: 0.5rem;
-      border-radius: 0.375rem;
-      border: 1px solid #ccc;
-      background-color: #f7f7f7;
-      color: #333;
-    }
-    .btn-details {
-      background-color: #4a90e2;
-      color: white;
-      padding: 0.25rem 0.5rem;
-      border-radius: 0.25rem;
-      border: none;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-    }
-    .btn-details:hover {
-      background-color: #357ab8;
-    }
-    .tooltip {
-      position: relative;
-      display: inline-block;
-    }
-    .tooltip .tooltiptext {
-      visibility: hidden;
-      width: 160px;
-      background-color: #555;
-      color: #fff;
-      text-align: center;
-      border-radius: 6px;
-      padding: 5px 0;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%; /* Position above the icon */
-      left: 50%;
-      margin-left: -80px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      font-size: 10px; /* Small font size */
-    }
-    .tooltip:hover .tooltiptext {
-      visibility: visible;
-      opacity: 1;
-    }
-    .fa-question-circle {
-      color: #6b7280; /* Grey shade */
-      transition: color 0.3s ease;
-    }
-    .fa-question-circle:hover {
-      color: #4b5563; /* Darker grey on hover */
-    }
-  `]
+  styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class DashboardComponent implements OnInit{
+  retirementForm: FormGroup;
+  specificGoalForm: FormGroup;
   showRetirementForm = true;
   showSpecificGoalForm = false;
   isLoading: boolean = false; // Ensure this line is present
@@ -119,8 +47,55 @@ export class DashboardComponent {
   riskTolerance: string = '';
   mutFundList: string = '';
   jsonAll: any;
+  message: string = '';
+  isLoggedIn: boolean = false;
+  userName: string = ''; // Example user name
+  dropdownOpen: boolean = false;
+  
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient,private authService : AuthService,private router: Router,private fb: FormBuilder) {
+    this.retirementForm = this.fb.group({
+      retirementAge: ['', Validators.required],
+      currentAge: ['', Validators.required],
+      monthlyExpectedSavings: [''],
+      riskTolerance: ['', Validators.required]
+    });
+
+    this.specificGoalForm = this.fb.group({
+      amountNeeded: ['', Validators.required],
+      timeFrame: ['', Validators.required],
+      monthlySavingsReq: ['', Validators.required],
+      riskTolerance: ['', Validators.required]
+    });
+  }
+  ngOnInit(): void {
+    
+    if (typeof localStorage !== 'undefined') {
+    const token = localStorage.getItem('access_token');
+    
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });    this.http.get<any>('http://localhost:8000/protected', { headers }).subscribe(
+      res => {
+        this.isLoggedIn = true;
+        this.userName = res.message;
+      },
+      err => {
+        console.log(err);
+          this.isLoggedIn = false;
+          this.logout();
+      }
+    );
+  }
+  }
+  toggleDropdown() {
+    this.dropdownOpen = !this.dropdownOpen;
+  }
+  logout() {
+    this.authService.logout();
+    this.isLoggedIn = false;
+    this.router.navigate(['/']);
+  }
 
   toggleDarkMode() {
     this.isDarkMode = !this.isDarkMode;
@@ -156,18 +131,35 @@ export class DashboardComponent {
 
  
 
-
+  submitRetirementFormDriver(){
+    if(this.authService.isLoggedIn()){
+      this.submitRetirementForm();
+    }
+    else{
+      this.authService.logout();
+    }
+  }
 
   submitRetirementForm() {
    
     this.flagSpecific = false;
     this.flagRetire = false; 
     this.isLoading = true; // Start loading animation
+    // const formData = {
+    //   currentAge: this.currentAge.toString(),
+    //   retirementAge: this.retirementAge.toString(),
+    //   riskTolerance: this.riskTolerance.toString(),
+    //   monthlyInvestment: this.monthlyExpectedSavings.toString(),
+    //   hasEmergencyFund: 'false',
+    //   hasCorpusFund: 'false',
+    //   emergencyFundAmount: '0',
+    //   corpusFundAmount: '0'
+    // };
     const formData = {
-      currentAge: this.currentAge.toString(),
-      retirementAge: this.retirementAge.toString(),
-      riskTolerance: this.riskTolerance.toString(),
-      monthlyInvestment: this.monthlyExpectedSavings.toString(),
+      currentAge: this.retirementForm.get('currentAge')?.value.toString(),
+      retirementAge: this.retirementForm.get('retirementAge')?.value.toString(),
+      riskTolerance: this.retirementForm.get('riskTolerance')?.value.toString(),
+      monthlyInvestment: this.retirementForm.get('monthlyExpectedSavings')?.value.toString(),
       hasEmergencyFund: 'false',
       hasCorpusFund: 'false',
       emergencyFundAmount: '0',
@@ -202,11 +194,17 @@ export class DashboardComponent {
     this.isLoading = true;
     this.flagSpecific = false;
     this.flagRetire = false; // Start loading animation
+    // const formData = {
+    //   targetAmount: this.amountNeeded,
+    //   timeFrame: this.timeFrame,
+    //   monthlyInvestment: this.monthlySavingsReq,
+    //   riskTolerance: this.riskTolerance.toString(),
+    // };
     const formData = {
-      targetAmount: this.amountNeeded,
-      timeFrame: this.timeFrame,
-      monthlyInvestment: this.monthlySavingsReq,
-      riskTolerance: this.riskTolerance.toString(),
+      targetAmount: this.specificGoalForm.get('amountNeeded')?.value.toString(),
+      timeFrame: this.specificGoalForm.get('timeFrame')?.value.toString(),
+      monthlyInvestment: this.specificGoalForm.get('monthlySavingsReq')?.value.toString(),
+      riskTolerance: this.specificGoalForm.get('riskTolerance')?.value.toString(),
     };
 
     this.http.post('http://localhost:8000/uploadDetailsSpecificGoal', formData)

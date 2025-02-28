@@ -1,11 +1,18 @@
-<div class = "bg-container">
 <div class="landing-page bg-gradient-to-b from-slate-900 to-slate-800">
   <header class="header">
     <nav class="navbar max-w-7xl mx-auto px-4">
       <div class="logo text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 hover:from-purple-400 hover:to-blue-400 transition-all duration-300">AIF3<br>(Finance,Fashion,Fitness)</div>
       <ul class="nav-links">
-        <button (click)="redirectToLogin()" class="get-started bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-indigo-500 hover:to-sky-500 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold">Sign In</button>
-        <button (click)="redirectToSignUp()" class="get-started bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-indigo-500 hover:to-sky-500 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold">Sign Up</button>
+        <div *ngIf="!isLoggedIn">
+          <button (click)="redirectToLogin()" class="get-started bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-indigo-500 hover:to-sky-500 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold mr-4">Sign In</button>
+          <button (click)="redirectToSignUp()" class="get-started bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-indigo-500 hover:to-sky-500 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold">Sign Up</button>
+        </div>
+        <div class="user-dropdown" *ngIf="isLoggedIn">
+          <button (click)="toggleDropdown()" class="user-name">{{ userName }}</button>
+          <div class="dropdown-content" *ngIf="dropdownOpen">
+            <button (click)="logout()">Logout</button>
+          </div>
+        </div>
       </ul>
     </nav>
   </header>
@@ -61,6 +68,6 @@
   <section class="cta">
     <h2>Ready to get started?</h2>
     <p>Join thousands of users who are already transforming their lives with AI.</p>
+    <p>This site is best visible on WEB, for mobile please download our app from App store</p>
   </section>
-</div>
 </div>

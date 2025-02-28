@@ -3,14 +3,16 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  /* background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); */
+  background: linear-gradient(135deg, #0f172a 0%, #1f2b3e 50%, #0f172a 100%);
+
 }
 
 .login-box {
-  background-color: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  background: linear-gradient(135deg, #292c30 50%, #1f2b3e  80%);
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 15px;
+  box-shadow: 0 10px 10px rgba(36, 30, 210, 0.2);
   width: 300px;
   text-align: center;
 }
@@ -99,4 +101,6 @@ input {
 .signup-link a {
   color: #4a90e2;
   text-decoration: none;
+  cursor: pointer; /* Ensure the cursor changes to a pointer */
+
 }

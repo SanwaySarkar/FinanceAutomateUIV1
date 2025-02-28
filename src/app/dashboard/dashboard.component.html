@@ -1,7 +1,17 @@
-<div *ngIf="isLoading" class="flex justify-center items-center">
-  <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-</div>
-<div class="p-6 text-gray-200 bg-gray-900" [ngClass]="{'dark-mode': isDarkMode}">
+
+<nav class="navbar fixed top-0 left-0 w-full px-4 flex justify-between items-center">
+  <a routerLink="/" class="logo text-white font-bold ">Home</a>
+  <div class="user-dropdown" *ngIf="isLoggedIn">
+    <button (click)="toggleDropdown()" class="user-name text-white">{{ userName }}</button>
+    <div class="dropdown-content" *ngIf="dropdownOpen">
+      <button (click)="logout()">Logout</button>
+    </div>
+  </div>
+</nav>
+<div class="content mt-16">
+  <div *ngIf="isLoading" class="flex justify-center items-center">
+    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+  </div>
   <!-- Header Section -->
   <div class="mb-8 text-center">
     <h1 class="text-3xl font-bold mb-2 text-gray-300">Smart Financial Planning</h1>
@@ -34,30 +44,39 @@
     <div class="col-span-1 space-y-6" style="max-width: 150%;">
       <!-- Retirement Form -->
       <div *ngIf="showRetirementForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
-        <form (ngSubmit)="submitRetirementForm()">
+        <form [formGroup]="retirementForm" (ngSubmit)="submitRetirementFormDriver()">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
-              <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Target Retirement Age" required pattern="[0-9]*" [(ngModel)]="retirementAge" name="retirementAge">
+              <div class="input-group">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Target Retirement Age" formControlName="retirementAge" required>
+                <div *ngIf="retirementForm.get('retirementAge')?.invalid && retirementForm.get('retirementAge')?.touched" class="error">
+                  Target Retirement Age is required.
+                </div>
               </div>
-              <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Current Age" required pattern="[0-9]*" [(ngModel)]="currentAge" name="currentAge">
+              <div class="input-group">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Current Age" formControlName="currentAge" required>
+                <div *ngIf="retirementForm.get('currentAge')?.invalid && retirementForm.get('currentAge')?.touched" class="error">
+                  Current Age is required.
+                </div>
               </div>
-              <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Expected Income" required pattern="[0-9]*" [(ngModel)]="monthlyExpectedSavings" name="monthlyExpectedSavings">
+              <div class="input-group">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Expected Income" formControlName="monthlyExpectedSavings">
               </div>
               <!-- Risk Tolerance Dropdown -->
-              <div>
-                <select class="form-input bg-gray-700 text-gray-200" [(ngModel)]="riskTolerance" name="riskTolerance" required>
+              <div class="input-group">
+                <select class="form-input bg-gray-700 text-gray-200" formControlName="riskTolerance" required>
                   <option value="" disabled selected>Risk Tolerance</option>
                   <option value="High Return">High</option>
                   <option value="High Sharpe Ratio">Moderate</option>
                   <option value="Low Volatility">Low</option>
                 </select>
+                <div *ngIf="retirementForm.get('riskTolerance')?.invalid && retirementForm.get('riskTolerance')?.touched" class="error">
+                  Risk Tolerance is required.
+                </div>
               </div>
             </div>
             <div class="flex space-x-3">
-              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">Submit Retirement Form</button>
+              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white" [disabled]="retirementForm.invalid">Submit Retirement Form</button>
             </div>
           </div>
         </form>
@@ -65,29 +84,41 @@
       
       <!-- Specific Goal Form -->
       <div *ngIf="showSpecificGoalForm" class="bg-gray-800 rounded-lg p-6 shadow-lg flex flex-col justify-between">
-        <form (ngSubmit)="submitSpecificGoalForm()">
+        <form [formGroup]="specificGoalForm" (ngSubmit)="submitSpecificGoalForm()">
           <div class="space-y-4">
             <div class="grid grid-cols-2 gap-4">
               <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Amount Needed" required pattern="[0-9]*" [(ngModel)]="amountNeeded" name="amountNeeded">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Amount Needed" formControlName="amountNeeded" required pattern="[0-9]*">
+                <div *ngIf="specificGoalForm.get('amountNeeded')?.invalid && specificGoalForm.get('amountNeeded')?.touched" class="error">
+                  Amount Needed is required.
+                </div>
               </div>
               <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Time Frame" required pattern="[0-9]*" [(ngModel)]="timeFrame" name="timeFrame">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Time Frame" formControlName="timeFrame" required pattern="[0-9]*">
+                <div *ngIf="specificGoalForm.get('timeFrame')?.invalid && specificGoalForm.get('timeFrame')?.touched" class="error">
+                  Time Frame is required.
+                </div>
               </div>
               <div>
-                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Savings" required pattern="[0-9]*" [(ngModel)]="monthlySavingsReq" name="monthlySavingsReq">
+                <input type="text" class="form-input bg-gray-700 text-gray-200" placeholder="Monthly Savings" formControlName="monthlySavingsReq" required pattern="[0-9]*">
+                <div *ngIf="specificGoalForm.get('monthlySavingsReq')?.invalid && specificGoalForm.get('monthlySavingsReq')?.touched" class="error">
+                  Monthly Savings is required.
+                </div>
               </div>
               <div>
-                <select class="form-input bg-gray-700 text-gray-200" [(ngModel)]="riskTolerance" name="riskTolerance" required>
+                <select class="form-input bg-gray-700 text-gray-200" formControlName="riskTolerance" required>
                   <option value="" disabled selected>Risk Tolerance</option>
                   <option value="High Return">High</option>
                   <option value="High Sharpe Ratio">Moderate</option>
                   <option value="Low Volatility">Low</option>
                 </select>
+                <div *ngIf="specificGoalForm.get('riskTolerance')?.invalid && specificGoalForm.get('riskTolerance')?.touched" class="error">
+                  Risk Tolerance is required.
+                </div>
               </div>
             </div>
             <div class="flex space-x-3">
-              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white">
+              <button type="submit" class="btn-primary flex-1 transition duration-300 ease-in-out transform hover:scale-105 bg-blue-500 text-white" [disabled]="specificGoalForm.invalid">
                 Generate recommendations
               </button>
             </div>
