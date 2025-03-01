@@ -40,7 +40,7 @@ export class SignupComponent implements OnInit {
         'email': this.signupForm.value.email
       };
       this.isSignup = true;
-      this.http.post<any>('http://localhost:8000/signup', formData).subscribe(
+      this.http.post<any>('http://35.225.6.136:8000/signup', formData).subscribe(
         res => {
           this.router.navigate(['/']);
         },

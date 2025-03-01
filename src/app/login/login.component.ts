@@ -50,7 +50,7 @@ export class LoginComponent implements OnInit {
         'password': this.loginForm.value.password
       };
       this.isLogin = true;
-      this.http.post<any>('http://localhost:8000/login', formData).subscribe(
+      this.http.post<any>('http://35.225.6.136:8000/login', formData).subscribe(
         res => {
           this.authService.setToken(res.access_token);
           //this.router.navigate([this.returnUrl]);
