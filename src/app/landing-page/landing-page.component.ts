@@ -27,7 +27,7 @@ export class LandingPageComponent {
       const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
       });    
-      this.http.get<any>('http://localhost:8000/protected', { headers }).subscribe(
+      this.http.get<any>('http://35.225.6.136:8000/protected', { headers }).subscribe(
         res => {
           this.isLoggedIn = true;
           this.userName = res.message;
