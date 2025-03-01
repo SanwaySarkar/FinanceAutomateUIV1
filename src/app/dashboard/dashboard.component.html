@@ -1,6 +1,9 @@
 
 <nav class="navbar fixed top-0 left-0 w-full px-4 flex justify-between items-center">
-  <a routerLink="/" class="logo text-white font-bold ">Home</a>
+  <div class="flex items-center"> <!-- Add a flex container -->
+    <img src="assets/ic_logo.png" alt="Logo" class="inline-block mr-2" style="width: 90px; height: 40px;">
+    <a routerLink="/" class="logo text-white font-bold">Home</a>
+  </div>
   <div class="user-dropdown" *ngIf="isLoggedIn">
     <button (click)="toggleDropdown()" class="user-name text-white">{{ userName }}</button>
     <div class="dropdown-content" *ngIf="dropdownOpen">

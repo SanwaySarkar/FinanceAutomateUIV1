@@ -1,7 +1,10 @@
 <div class="landing-page bg-gradient-to-b from-slate-900 to-slate-800">
   <header class="header">
     <nav class="navbar max-w-7xl mx-auto px-4">
-      <div class="logo text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 hover:from-purple-400 hover:to-blue-400 transition-all duration-300">AIF3<br>(Finance,Fashion,Fitness)</div>
+      <div class="logo text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400 hover:from-purple-400 hover:to-blue-400 transition-all duration-300">
+        <img src="assets/ic_logo.png" alt="Logo Icon" class="inline-block mr-2" style="width: 120px; height: 40px;"> <!-- Add your icon here -->
+        <br>(Finance,Fashion,Fitness)
+      </div>
       <ul class="nav-links">
         <div *ngIf="!isLoggedIn">
           <button (click)="redirectToLogin()" class="get-started bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-indigo-500 hover:to-sky-500 text-white px-6 py-2 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 font-semibold mr-4">Sign In</button>
