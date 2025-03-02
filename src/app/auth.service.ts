@@ -1,6 +1,7 @@
-import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { jwtDecode } from 'jwt-decode';
+import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 export interface JwtPayload {
     exp: number;
     sub: string;
@@ -16,7 +17,9 @@ export class AuthService {
 
 
 
-  constructor(private router: Router) { }
+  //constructor(private router: Router) { }
+  constructor(@Inject(PLATFORM_ID) private platformId: object,private router: Router) {}
+
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
@@ -24,7 +27,10 @@ export class AuthService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.tokenKey);
+ if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem(this.tokenKey);  // Access localStorage only in the browser
+    }
+    return null;  
   }
 
   isLoggedIn(): boolean {
