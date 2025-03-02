@@ -75,7 +75,7 @@ export class DashboardComponent implements OnInit{
     
     const headers = new HttpHeaders({
       'Authorization': `Bearer ${token}`
-    });    this.http.get<any>('http://35.223.216.83:8000/protected', { headers }).subscribe(
+    });    this.http.get<any>('http://35.225.6.136:8000/protected', { headers }).subscribe(
       res => {
         this.isLoggedIn = true;
         this.userName = res.message;
@@ -166,7 +166,7 @@ export class DashboardComponent implements OnInit{
       corpusFundAmount: '0'
     };
 
-    this.http.post('http://35.223.216.83:8000/uploadDetailsRetirement', formData)
+    this.http.post('http://35.225.6.136:8000/uploadDetailsRetirement', formData)
       .subscribe((res: any) => {
         this.isLoading = false; // Stop loading animation
         const response = res;
@@ -207,7 +207,7 @@ export class DashboardComponent implements OnInit{
       riskTolerance: this.specificGoalForm.get('riskTolerance')?.value.toString(),
     };
 
-    this.http.post('http://35.223.216.83:8000/uploadDetailsSpecificGoal', formData)
+    this.http.post('http://35.225.6.136:8000/uploadDetailsSpecificGoal', formData)
       .subscribe((res: any) => {
         this.isLoading = false; // Stop loading animation
         // Handle response
