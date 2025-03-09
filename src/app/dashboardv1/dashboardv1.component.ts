@@ -137,7 +137,7 @@ export class DashboardV1Component {
       corpusFundAmount: '0'
     };
 
-    this.http.post('http://localhost:8000/uploadDetailsRetirement', formData)
+    this.http.post('https://3finityai.com/api/uploadDetailsRetirement', formData)
       .subscribe((res: any) => {
         this.isLoading = false; // Stop loading animation
         const response = res;
@@ -184,7 +184,7 @@ export class DashboardV1Component {
       
       const headers = new HttpHeaders({
         'Authorization': `Bearer ${token}`
-      });    this.http.get<any>('http://localhost:8000/protected', { headers }).subscribe(
+      });    this.http.get<any>('https://3finityai.com/api/protected', { headers }).subscribe(
         res => {
           this.isLoggedIn = true;
           this.userName = res.message;
@@ -214,7 +214,7 @@ export class DashboardV1Component {
       riskTolerance: this.specificGoalFormv1.get('riskTolerance')?.value.toString(),
     };
 
-    this.http.post('http://localhost:8000/uploadDetailsSpecificGoal', formData)
+    this.http.post('https://3finityai.com/api/uploadDetailsSpecificGoal', formData)
       .subscribe((res: any) => {
         this.isLoading = false; // Stop loading animation
         // Handle response
