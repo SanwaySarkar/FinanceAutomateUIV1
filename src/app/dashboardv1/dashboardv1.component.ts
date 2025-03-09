@@ -1,21 +1,24 @@
-import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClient, HttpClientModule, HttpHeaders } from '@angular/common/http';
-import { ModalModule } from './modal/modal.module';
-import { AuthService } from '../auth.service';
-import { Router, RouterModule } from '@angular/router'; // Import the ModalModule
+import { Component } from '@angular/core';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ModalModule } from '../dashboard/modal/modal.module';
+import { Router, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
+
+
 @Component({
-  selector: 'app-dashboard',
+  selector: 'app-dashboardv1',
   standalone: true,
-  imports: [CommonModule, FormsModule, HttpClientModule, ModalModule,RouterModule,ReactiveFormsModule], // Use ModalModule here
-  templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.css'
+  templateUrl: './dashboardv1.component.html',
+  imports: [CommonModule, FormsModule, HttpClientModule, ModalModule,RouterModule,ReactiveFormsModule], // Use ModalModule here  templateUrl: './dashboardv1.component.html',
+  styleUrl: './dashboardv1.component.css'
 })
-export class DashboardComponent implements OnInit{
-  retirementForm: FormGroup;
-  specificGoalForm: FormGroup;
+export class DashboardV1Component {
+  selectedForm: string = 'retirement'; // Default to retirement form
+  retirementFormv1: FormGroup;
+  specificGoalFormv1: FormGroup;
   showRetirementForm = true;
   showSpecificGoalForm = false;
   isLoading: boolean = false; // Ensure this line is present
@@ -42,6 +45,9 @@ export class DashboardComponent implements OnInit{
   currentAge: string = '';
   monthlyExpectedSavings: string = '';
   amountNeeded: string = '';
+  inflationRate: string = '';
+  preRetirementReturn: string = '';
+  postRetirementReturn: string = '';
   timeFrame: string = '';
   monthlySavingsReq: string = '';
   riskTolerance: string = '';
@@ -51,17 +57,17 @@ export class DashboardComponent implements OnInit{
   isLoggedIn: boolean = false;
   userName: string = ''; // Example user name
   dropdownOpen: boolean = false;
-  
-
   constructor(private http: HttpClient,private authService : AuthService,private router: Router,private fb: FormBuilder) {
-    this.retirementForm = this.fb.group({
+    this.retirementFormv1 = this.fb.group({
       retirementAge: ['', Validators.required],
       currentAge: ['', Validators.required],
-      monthlyExpectedSavings: [''],
+      monthlyExpectedSavings: ['',Validators.required],
+      inflationRate: ['', Validators.required],
+      postRetirementReturn: ['', Validators.required],
       riskTolerance: ['', Validators.required]
     });
 
-    this.specificGoalForm = this.fb.group({
+    this.specificGoalFormv1 = this.fb.group({
       amountNeeded: ['', Validators.required],
       timeFrame: ['', Validators.required],
       monthlySavingsReq: ['', Validators.required],
@@ -72,38 +78,18 @@ export class DashboardComponent implements OnInit{
     
     this.checkLogin();
   }
-  checkLogin(){
-    if (typeof localStorage !== 'undefined') {
-      const token = localStorage.getItem('access_token');
-      
-      const headers = new HttpHeaders({
-        'Authorization': `Bearer ${token}`
-      });    this.http.get<any>('http://localhost:8000/protected', { headers }).subscribe(
-        res => {
-          this.isLoggedIn = true;
-          this.userName = res.message;
-        },
-        err => {
-          console.log(err);
-            this.isLoggedIn = false;
-            this.logout();
-        }
-      );
-    }
+  redirectToHome() {
+    this.router.navigate(['/']);
   }
-  toggleDropdown() {
-    this.dropdownOpen = !this.dropdownOpen;
+  filterMutFundData(assetType: string) {
+    this.mutFundData = this.jsonAll.filter((fund: { categoryName: string }) => fund.categoryName === assetType);
+    this.showModal = true;
   }
   logout() {
     this.authService.logout();
     this.isLoggedIn = false;
     this.router.navigate(['/']);
   }
-
-  toggleDarkMode() {
-    this.isDarkMode = !this.isDarkMode;
-  }
-
   filterPortfolio() {
     this.filteredPortfolio = this.recommendedPortfolio.filter(fund =>
       fund.fundName.toLowerCase().includes(this.searchTerm.toLowerCase())
@@ -113,6 +99,7 @@ export class DashboardComponent implements OnInit{
   toggleRetirementForm() {
     if (!this.showRetirementForm) {
       this.showRetirementForm = true;
+      this.selectedForm = 'retirement'
       this.showSpecificGoalForm = false;
     }
   }
@@ -120,6 +107,7 @@ export class DashboardComponent implements OnInit{
   selectSpecificGoal() {
     if (!this.showSpecificGoalForm) {
       this.showSpecificGoalForm = true;
+      this.selectedForm ='specificGoal'
       this.showRetirementForm = false;
     }
   }
@@ -131,39 +119,18 @@ export class DashboardComponent implements OnInit{
     this.validationMessage = message;
     this.showValidationModal = true; // Use separate modal flag
   }
-
- 
-
-  submitRetirementFormDriver(){
-    this.checkLogin()
-    if(this.authService.isLoggedIn()){
-      this.submitRetirementForm();
-    }
-    else{
-      this.authService.logout();
-    }
-  }
-
   submitRetirementForm() {
    
     this.flagSpecific = false;
     this.flagRetire = false; 
     this.isLoading = true; // Start loading animation
-    // const formData = {
-    //   currentAge: this.currentAge.toString(),
-    //   retirementAge: this.retirementAge.toString(),
-    //   riskTolerance: this.riskTolerance.toString(),
-    //   monthlyInvestment: this.monthlyExpectedSavings.toString(),
-    //   hasEmergencyFund: 'false',
-    //   hasCorpusFund: 'false',
-    //   emergencyFundAmount: '0',
-    //   corpusFundAmount: '0'
-    // };
     const formData = {
-      currentAge: this.retirementForm.get('currentAge')?.value.toString(),
-      retirementAge: this.retirementForm.get('retirementAge')?.value.toString(),
-      riskTolerance: this.retirementForm.get('riskTolerance')?.value.toString(),
-      monthlyInvestment: this.retirementForm.get('monthlyExpectedSavings')?.value.toString(),
+      currentAge: this.retirementFormv1.get('currentAge')?.value.toString(),
+      retirementAge: this.retirementFormv1.get('retirementAge')?.value.toString(),
+      riskTolerance: this.retirementFormv1.get('riskTolerance')?.value.toString(),
+      monthlyInvestment: this.retirementFormv1.get('monthlyExpectedSavings')?.value.toString(),
+      inflationRate : this.retirementFormv1.get('inflationRate')?.value.toString(),
+      postRetirementReturn:  this.retirementFormv1.get('postRetirementReturn')?.value.toString(),
       hasEmergencyFund: 'false',
       hasCorpusFund: 'false',
       emergencyFundAmount: '0',
@@ -193,7 +160,43 @@ export class DashboardComponent implements OnInit{
         console.error('Error submitting form', error);
       });
   }
-
+  submitRetirementFormDriver(){
+    this.checkLogin()
+    if(this.authService.isLoggedIn()){
+      this.submitRetirementForm();
+    }
+    else{
+      this.authService.logout();
+    }
+  }
+  submitSpecificFormDriver(){
+    this.checkLogin()
+    if(this.authService.isLoggedIn()){
+      this.submitSpecificGoalForm();
+    }
+    else{
+      this.authService.logout();
+    }
+  }
+  checkLogin(){
+    if (typeof localStorage !== 'undefined') {
+      const token = localStorage.getItem('access_token');
+      
+      const headers = new HttpHeaders({
+        'Authorization': `Bearer ${token}`
+      });    this.http.get<any>('http://localhost:8000/protected', { headers }).subscribe(
+        res => {
+          this.isLoggedIn = true;
+          this.userName = res.message;
+        },
+        err => {
+          console.log(err);
+            this.isLoggedIn = false;
+            this.logout();
+        }
+      );
+    }
+  }
   submitSpecificGoalForm() {
     this.isLoading = true;
     this.flagSpecific = false;
@@ -205,10 +208,10 @@ export class DashboardComponent implements OnInit{
     //   riskTolerance: this.riskTolerance.toString(),
     // };
     const formData = {
-      targetAmount: this.specificGoalForm.get('amountNeeded')?.value.toString(),
-      timeFrame: this.specificGoalForm.get('timeFrame')?.value.toString(),
-      monthlyInvestment: this.specificGoalForm.get('monthlySavingsReq')?.value.toString(),
-      riskTolerance: this.specificGoalForm.get('riskTolerance')?.value.toString(),
+      targetAmount: this.specificGoalFormv1.get('amountNeeded')?.value.toString(),
+      timeFrame: this.specificGoalFormv1.get('timeFrame')?.value.toString(),
+      monthlyInvestment: this.specificGoalFormv1.get('monthlySavingsReq')?.value.toString(),
+      riskTolerance: this.specificGoalFormv1.get('riskTolerance')?.value.toString(),
     };
 
     this.http.post('http://localhost:8000/uploadDetailsSpecificGoal', formData)
@@ -233,8 +236,4 @@ export class DashboardComponent implements OnInit{
       });
   }
 
-  filterMutFundData(assetType: string) {
-    this.mutFundData = this.jsonAll.filter((fund: { categoryName: string }) => fund.categoryName === assetType);
-    this.showModal = true;
-  }
 }

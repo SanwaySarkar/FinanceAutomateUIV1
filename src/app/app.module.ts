@@ -9,12 +9,14 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { SignupComponent } from './signup/signup.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { TokenInterceptor } from './token.interceptor';
+import { DashboardV1Component } from './dashboardv1/dashboardv1.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    LandingPageComponent,
-    LoginComponent,SignupComponent // Declare the LandingPageComponent
+    // AppComponent,
+    // LandingPageComponent,DashboardComponent,DashboardV1Component,
+    // LoginComponent,SignupComponent // Declare the LandingPageComponent
   ],
   imports: [
     BrowserModule,
@@ -23,6 +25,6 @@ import { TokenInterceptor } from './token.interceptor';
     RouterModule.forRoot(routes) 
   ],
   providers: [{ provide: HTTP_INTERCEPTORS, useClass: TokenInterceptor, multi: true }],
-  bootstrap: [AppComponent]
+  //bootstrap: [AppComponent]
 })
 export class AppModule {}

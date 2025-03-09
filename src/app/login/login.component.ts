@@ -21,7 +21,7 @@ export class LoginComponent implements OnInit {
   emailId: string = '';
   pwd: string = '';
   loginForm: FormGroup;
-  isLogin : boolean = false;
+  isLoading: boolean = false;
 
 
   constructor(
@@ -35,36 +35,39 @@ export class LoginComponent implements OnInit {
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
-    this.isLogin = false;
   }
 
   ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
   }
+  redirectToHome() {
+    this.router.navigate(['/']);
+  }
 
   onSubmit() {
-      // OAuth2PasswordRequestForm requires form-data encoding.
-      if(this.loginForm.valid){
+    if(this.loginForm.valid){
+      this.isLoading = true;
       const formData = {
         'username': this.loginForm.value.username,
         'password': this.loginForm.value.password
       };
-      this.isLogin = true;
-      this.http.post<any>('http://35.225.6.136:8000/login', formData).subscribe(
+      this.http.post<any>('http://localhost:8000/login', formData).subscribe(
         res => {
+          this.isLoading = false;
           this.authService.setToken(res.access_token);
-          //this.router.navigate([this.returnUrl]);
-          this.router.navigate(['/']);
-
+          this.errorMessage = '<span style="color: #22c55e">Login successful! Redirecting to home page...</span>';
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
         },
         err => {
+          this.isLoading = false;
           this.errorMessage = err.error.detail || 'Login failed';
         }
       );
-    this.isLogin = false;
-  }
-  else {
-    this.errorMessage = 'Please enter valid credentials';
+    } else {
+      this.errorMessage = 'Please enter valid credentials';
+    }
   }
 }
-}
+

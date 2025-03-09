@@ -1,54 +1,62 @@
-import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
+import { Component } from '@angular/core';
+import { FormBuilder, FormGroup, FormsModule, Validators } from '@angular/forms';
+import { AuthService } from '../auth.service';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router, RouterModule } from '@angular/router';
-import e from 'express';
+import { ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-signup',
-  templateUrl: './signup.component.html',
-  imports: [FormsModule,ReactiveFormsModule,HttpClientModule,RouterModule,CommonModule],
   standalone: true,
-  styleUrls: ['./signup.component.css']
+  imports: [FormsModule, ReactiveFormsModule, HttpClientModule, RouterModule, CommonModule],
+  templateUrl: './signup.component.html',
+  styleUrl: './signup.component.css'
 })
-export class SignupComponent implements OnInit {
+export class SignupComponent {
   signupForm: FormGroup;
   errorMessage: string = '';
-  isSignup : boolean = false;
+  isLoading: boolean = false;
 
   constructor(
     private fb: FormBuilder,
+    private authService: AuthService,
     private http: HttpClient,
-    private router: Router,
+    private router: Router
   ) {
     this.signupForm = this.fb.group({
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]]
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
     });
-    this.isSignup = false;
   }
-
-  ngOnInit(): void { }
+  redirectToHome() {
+    this.router.navigate(['/']);
+  }
 
   onSubmit() {
     if (this.signupForm.valid) {
+      this.isLoading = true;
       const formData = {
         'username': this.signupForm.value.username,
-        'password': this.signupForm.value.password,
-        'email': this.signupForm.value.email
+        'email': this.signupForm.value.email,
+        'password': this.signupForm.value.password
       };
-      this.isSignup = true;
-      this.http.post<any>('http://35.225.6.136:8000/signup', formData).subscribe(
+      this.http.post<any>('http://localhost:8000/signup', formData).subscribe(
         res => {
-          this.router.navigate(['/']);
+          this.isLoading = false;
+          this.errorMessage = '<span style="color: #22c55e">Signup successful! Redirecting to home page...</span>';
+          setTimeout(() => {
+            this.router.navigate(['/']);
+          }, 2000);
         },
         err => {
+          this.isLoading = false;
           this.errorMessage = err.error.detail || 'Signup failed';
         }
       );
-      this.isSignup = false;
+    } else {
+      this.errorMessage = 'Please fill all required fields correctly';
     }
   }
 }

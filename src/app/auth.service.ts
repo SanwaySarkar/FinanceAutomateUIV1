@@ -23,7 +23,7 @@ export class AuthService {
 
   setToken(token: string): void {
     localStorage.setItem(this.tokenKey, token);
-    this.scheduleAutoLogout(token);
+    //this.scheduleAutoLogout(token);
   }
 
   getToken(): string | null {

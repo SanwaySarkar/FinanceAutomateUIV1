@@ -1,0 +1,5 @@
+.highlight {
+  border: 2px solid #607AFB; /* Highlight border color */
+  border-radius: 8px; /* Rounded corners */
+  background-color: rgba(96, 122, 251, 0.1); /* Light background color */
+}
