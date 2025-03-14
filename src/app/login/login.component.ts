@@ -51,7 +51,7 @@ export class LoginComponent implements OnInit {
         'username': this.loginForm.value.username,
         'password': this.loginForm.value.password
       };
-      this.http.post<any>('http://localhost:8000/login', formData).subscribe(
+      this.http.post<any>('https://3finityai.com/api/login', formData).subscribe(
         res => {
           this.isLoading = false;
           this.authService.setToken(res.access_token);

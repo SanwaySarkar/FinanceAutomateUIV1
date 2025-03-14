@@ -42,7 +42,7 @@ export class SignupComponent {
         'email': this.signupForm.value.email,
         'password': this.signupForm.value.password
       };
-      this.http.post<any>('http://localhost:8000/signup', formData).subscribe(
+      this.http.post<any>('https://3finityai.com/api/signup', formData).subscribe(
         res => {
           this.isLoading = false;
           this.errorMessage = '<span style="color: #22c55e">Signup successful! Redirecting to home page...</span>';
