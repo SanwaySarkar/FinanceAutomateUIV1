@@ -3,7 +3,7 @@
       style='font-family: "Plus Jakarta Sans", "Noto Sans", sans-serif;'
     >
       <div class="layout-container flex h-full grow flex-col">
-        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#3C3F4A] px-10 py-3">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#3C3F4A] px-4 md:px-10 py-3 gap-4 md:gap-0">
           <div class="flex items-center gap-4 text-[#F9FAFA]">
             <div class="size-4">
               <svg viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -127,7 +127,7 @@
                 </div>
               </label>
             </div>
-            <div  *ngIf="showRetirementForm" class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <div  *ngIf="showRetirementForm" class="flex max-w-480 flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
                 <p class="text-white text-base font-medium leading-normal pb-2">Post-Retirement Return</p>
                 <input
@@ -159,7 +159,7 @@
          
             <div *ngIf="showRetirementForm" class="flex px-4 py-3">
               <button
-              class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center  overflow-hidden rounded-full h-12 px-5 bg-[#6376d5] text-white gap-2 pl-5 text-base font-bold leading-normal tracking-[0.015em]"
+              class="flex min-w-84 max-w-480 cursor-pointer items-center overflow-hidden rounded-full h-12 px-5 bg-[#6376d5] text-white gap-2 pl-5 text-base font-bold leading-normal tracking-[0.015em]"
               [disabled]="retirementFormv1.invalid || isLoading"
             >
               <div *ngIf="!isLoading" class="text-white" data-icon="ArrowRight" data-size="24px" data-weight="regular">
@@ -180,7 +180,7 @@
 
             <!-----specific form-->
             <form [formGroup]="specificGoalFormv1" (ngSubmit)="submitSpecificFormDriver()">
-            <div  *ngIf="showSpecificGoalForm"  class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <div  *ngIf="showSpecificGoalForm"  class="flex max-w-480 flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
                 <p class="text-white text-base font-medium leading-normal pb-2">Target Amount</p>
                 <input
@@ -206,7 +206,7 @@
                 </div>
               </label>
             </div>
-            <div  *ngIf="showSpecificGoalForm"  class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
+            <div  *ngIf="showSpecificGoalForm"  class="flex max-w-480 flex-wrap items-end gap-4 px-4 py-3">
               <label class="flex flex-col min-w-40 flex-1">
                 <p class="text-white text-base font-medium leading-normal pb-2">Monthly Savings</p>
                 <input
